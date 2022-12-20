@@ -1,0 +1,180 @@
+<!-- 로그인 화면 (웹뷰) -->
+<script src="https://unpkg.com/phosphor-icons"></script>
+
+<div id="mb-auth-bg">
+	<div class="mb-wrapper" style="display:block;">
+		{? !oauth_login}
+		<div class="mb-auto-bg-box1">
+			<div class="lang_select_box2">
+				<div class="p_rel">
+					<div class="mb-auth-lang-selector">
+						<div id="mb-auth-lang-selector-opener" class="mb-auth-lang">
+							{= langs('selected_lang')}
+							<span class="select_icon">
+								<img src="/asset/wm60/images/login_CI/icon_selected_arrow-light.svg" alt="다국어 아이콘">
+							</span>
+						</div>
+						<div id="mb-auth-lang-slider">
+							<a href="javascript:language_select('kr');"><div class="mb-auth-lang"{? lang == 'kr'}style='background-color: #FFFAF2; color: #FF6412''{/}>{= langs('lang_kr')}</div></a>
+							<a href="javascript:language_select('en');"><div class="mb-auth-lang"{? lang == 'en'}style='background-color: #FFFAF2'{/}>{= langs('lang_en')}</div></a>
+							<a href="javascript:language_select('jp');"><div class="mb-auth-lang"{? lang == 'jp'}style='background-color: #FFFAF2'{/}>{= langs('lang_jp')}</div></a>
+							<a href="javascript:language_select('cng');"><div class="mb-auth-lang"{? lang == 'cng'}style='background-color: #FFFAF2'{/}>{= langs('lang_cng')}</div></a>
+							<a href="javascript:language_select('cnb');"><div class="mb-auth-lang"{? lang == 'cnb'}style='background-color: #FFFAF2'{/}>{= langs('lang_cnb')}</div></a>
+							<a href="javascript:language_select('vn');"><div class="mb-auth-lang"{? lang == 'vn'}style='background-color: #FFFAF2'{/}>{= langs('lang_vn')}</div></a>
+							<a href="javascript:language_select('idn');"><div class="mb-auth-lang"{? lang == 'idn'}style='background-color: #FFFAF2'{/}>{= langs('lang_idn')}</div></a>
+							<a href="javascript:language_select('th');"><div class="mb-auth-lang"{? lang == 'th'}style='background-color: #FFFAF2'{/}>{= langs('lang_th')}</div></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		{/}
+		<div class="mb-auto-bg-box2">
+			<div id="mb-auth-wrapper" class="login">
+				{? !oauth_login}
+				<div id="mb-auth-logo-area">
+					{? get_code_name('config','UI_logo') == 'text'}
+					{? logo_value}
+						{=logo_value}
+					{:}
+					&nbsp;
+					{/}
+					{: get_code_name('config','UI_logo') == 'image'}
+					{? get_code_name('config', 'CUSTOM_maintopbanner') != ''}
+					<a href="{= get_code_name('config', 'CUSTOM_maintopbanner')}" target="_blank">{logo_value}
+						{* <img src="/asset/webview/images/login.png" class="logo"/> *}
+					</a>
+					{:}
+					{logo_value}
+					{/}
+					{:}
+						{=get_code_name('server','org_name')}
+					{/}
+
+					{? get_code_name('config', 'CUSTOM_loginlogoaddbtn2') != ''}
+					{= get_code_name('config', 'CUSTOM_loginlogoaddbtn2')}
+					{/}
+
+					{? get_code_name('config', 'CUSTOM_loginlogoaddbtn1') != ''}
+						<a href="{= logo_btn_link}" target="_blank">
+							<img src="/userImg/{DOMAIN}/{= logo_btn_image}" />
+						</a>
+					{/}
+
+					{? get_code_name('config', 'CUSTOM_loginlogolink') != ''}
+					<a href="{= get_code_name('config', 'CUSTOM_loginlogolink')}" target="_blank"><span>EHR</span></a>
+					{/}
+				</div>
+				{/}
+
+				<div id="mb-auth-input-area">
+					<div id="mb-auth-message-box" {? !_REQUEST['result']}class="initial"{/}>
+						<i class="ph-x-circle-fill"></i>
+						<span>{= langs('loginstart')}</span>
+					</div>
+					{? login_limit_set != "UNLIMIT" }
+					<form name="frmlogin" id="frmlogin" method="post" action="{? https != ''}{https}/api/loginset.php{:}/member/do_login{/}" onsubmit="return do_login();">
+						<input type="hidden" name="{csrf_token_name}" value="{csrf_hash}">
+						<input type="hidden" name="http_host" value="{HTTP_HOST}">
+						<input type="hidden" name="domain" value="{DOMAIN}">
+						<input type="hidden" name="myvalue" value="{myvalue}">
+						<input type="hidden" name="capcha_code" value="">
+						<input type="hidden" name="host_domain" id="host_domain" value="{= _GET['host_domain']}">
+						{? oauth_login}
+						<!-- [D] 근태관리에서 빠졌을 때 : id 고정 값 -->
+						<p class="fix-id">{COOKIE['rememberid']}@{DOMAIN}</p>
+						<p class="mid_tit">{= langs('ttl_type_pw')}</p>
+						<!-- //[D] 근태관리에서 빠졌을 때 : id 고정 값 -->
+						{/}
+						<div class="mb-auth-textinput-area id" {? oauth_login}style="display:none;"{/}>
+							<input class="textinput {? _GET['host_domain']}domain_pad{/}" type="text" name="cid" id="cid" placeholder="{=langs('wm_opt_msg1')}" title="{= langs('wm_opt_msg1')}" value="{? _GET['cid'] != ''}{= _GET['cid']}{:}{? COOKIE['rememberid']}{COOKIE['rememberid']}{/}{/}" autocapitalize="off" />
+							<!-- input(id) : Domain -->
+							{? _GET['host_domain']}
+							<div class="id_input_domain" style="display:block;">@{= _GET['host_domain']}</div>
+							{/}
+						</div>
+						<div class="mb-auth-textinput-area lw_pw" >
+							<input class="textinput" type="password" {? oauth_login}style="margin-top:-20px"{/} autocomplete="off" name="cpw" id="cpw" placeholder="{=langs('wm_opt_msg3')}" title="{= langs('wm_opt_msg3')}" value="{= _GET['cpw']}" autocapitalize="off"" />
+							<!-- [P] 비밀번호 감추기/보이기 아이콘 노출 -->
+							<i id="eye" class="isiz24 ph-eye-slash-thin eye1" style="display:none"></i>
+						</div>
+
+						{? atoken}
+						<p class="mb-auth-captcha-message" {? oauth_login}style="margin-top:40px;"{/}>{= langs('secure_code_input3')}</p>
+						<div class="mb-auth-captcha-image-button">
+							<img id="captcha-img" src="{= CAPTCHA_URL}?atoken={atoken}&lw_domain={= _SERVER['HTTP_HOST']}&lw_cid={= strip_tags(_COOKIE['PHPSESSID'])}&re&lw_img" alt="{= langs('here_click_plz')}" title="SpamFree.kr" style="border: none; cursor: pointer" onclick="reload_captcha();" />
+							<span id="captcha-reload-button" onclick="reload_captcha();"><i class="isiz24 ph-arrows-clockwise-light"></i></span>
+						</div>
+						<input class="mb-auth-captchainput" type="text" name="captcha_code_input" id="captcha_code_input" placeholder="{= langs('wm_btn10')}" title="{= langs('wm_btn10')}" />
+
+						{/}
+						<div id="mb-auth-account-area">
+							<div>
+								<label class="login_box_label" id="rememberid-label" for="rememberid" {? oauth_login}style="display:none;"{/}>
+									<input type="checkbox" class="login_box_radio" name="rememberid" id="rememberid" value="1" {? COOKIE['rememberid']}checked="checked"{/} />
+									{= langs('remain_id2')}
+								</label>
+							{? get_code_name('config','CUSTOM_mobile_auto_login_hide') != '1'}
+								<label class="login_box_label left" id="autologin-label" for="autologin" {? oauth_login}style="display:none;"{/}>
+									<input type="checkbox" class="login_box_radio" name="autologin" id="autologin" value="1" {? COOKIE['autologin']}checked="checked"{/} />
+									{= langs('autologinmsg')}
+								</label>
+							</div>
+							{:}
+							<!-- 비밀번호 찾기 / 아이디 신청 -->
+							<div class="login_box_label_right-btn">
+								<a href="javascript:;" id="pop_join" class="mb-auth-register">{= langs('id_regist')}</a>
+								<a href="javascript:;" id="pop_pw_search" class="mb-auth-findpw">{= langs('findpassword')}</a>
+							</div>
+							{/}
+						</div>
+
+						<button type="submit" class="mb-auth-login-button" id=".login_box_label_right a"  {? oauth_login}style="background: #DCDDD9;"{:}style="background: #E9E9E9;"{/} disabled>{= langs('logintitle')}</button>
+						<div id="mb-auth-footer-area">
+								<a id="change_domain" title="다른 도메인으로 로그인" onClick="redirect_login_step1();">{=langs('wm_btn8')}</a>
+						</div>
+					</div>
+				</form>
+				{/}
+			</div>
+		</div>
+	</div>
+	<!-- DNS 미설정 화면 -->
+	<div class="login_wrapper" style="display:none">
+		<div class="login_wrapper-screen">
+			<div class="login_dns_screen">
+				<div class="login_dns-appbar">
+					<a href="#" title="뒤로가기">
+						<i class="isiz24 ph-arrow-left-thin"></i>
+					</a>
+					<button title="{=langs('otp_pass')}">{=langs('otp_pass')}</button>
+				</div>
+
+				<div class="dns_screen_content">
+					<img src="/asset/wm60/images/login_CI/login_DNS_illust.svg" alt="접근 차단">
+					<div class="dns_content_txt">
+						<p>{=langs('wm_login_msg35')}</p>
+					</div>
+					<div class="btn-hompage-go">
+						<a href="#" target="_blank" title="{=langs('gohomepagebtn')}">
+							<span>{=langs('gohomepagebtn')}</span>
+							<i class="ph-arrow-square-out"></i>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{? SERVER_TYPE != 'RESELLER2'}
+{? get_code_name('config', 'CUSTOM_copyrightremove') != 'Y'}
+<div id="copyright" style="display:none;">
+	<div class="copyright-filter"></div>
+	{? get_code_name('config', 'CUSTOM_copyrightText') == ''}
+	<p>COPYRIGHT&copy; <a href="http://www.linuxwares.kr/" target="_blank">MAILPLUG</a> Inc. ALL RIGHTS RESERVED</p>
+	{:}
+	<p>{= get_code_name('config', 'CUSTOM_copyrightText')}</p>
+	{/}
+</div>
+{/}
+{/}

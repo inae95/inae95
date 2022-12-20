@@ -1,0 +1,166 @@
+<!-- 비밀번호 찾기 -->
+<script src="https://unpkg.com/phosphor-icons"></script>
+
+<div class="pw_search_wrapper">
+<div class="wrap-wid460" id="pw_search_step1">
+	<!-- 비밀번호 찾기 -->
+	<input type="hidden" name="{csrf_token_name}" value="{csrf_hash}">
+	<div id="userInfo">
+		<div class="wrap_title">
+			<p>{= langs('find_password')}</p>
+			<p class="title-sub14">{=langs('wm_login_ttl7')}</p>
+		</div>
+		<div class="content-input" style="display: none;">
+			<div class="input_toast-error">
+				<i class="ph-x-circle-fill"></i>
+				<p>{=langs('wm_login_msg2')}</p>
+			</div>
+		</div>
+		<div class="input_id">
+			<input type="text" name="user_id" id="user_id" class="box_input" placeholder="{=langs('wm_opt_msg1')}"/>
+			<div class="validation-list">
+				<p class="txt-fail validation-position" id="id_validation" style="display: none;">
+					<i class="isiz18 ph-x-circle-thin"></i>
+					메일주소가 아닌 아이디를 입력해주세요.	
+				</p>
+			</div>
+		</div>
+	</div>
+	<div class="login_btn">
+		<button type="submit" id="but_check" class="btn" title="{=langs('navnext')}" disabled />{= langs('navnext')}</button>
+	</div>
+	<div class="info_btn-move-login">
+		<a href="/member/login" title="{=langs('overlap_btn')}" tabindex="0">{=langs('overlap_btn')}</a>
+	</div>
+
+	{? SERVER_TYPE != 'RESELLER2'}
+	<div class="description_box margin-bot-0">
+		<i class="ph-info-fill"></i>
+		<span>내부 담당자일 경우 <a href="http://mailplug.com/front/myplug_mail/mail_list" target="_blank" title="서비스 정보">서비스 정보</a>에서 ‘메일 설정 바로가기’를 통해 관리자 페이지로 접속 하신 후 비밀번호를 변경해 주세요.</span>
+	</div>
+	{/}
+</div>
+	
+<div class="wrap-wid460" id="pw_search_step2" style="display:none; left:150%">
+<div class="alert-toast" style="display: none;">
+	<i class="isiz20 ph-info-fill"></i>
+	<span>{=langs('wm_login_msg13')}<br>{=langs('wm_login_msg14')}</span>
+	<button><i class="isiz20 ph-x-light"></i></button>
+</div>
+	<form name="write_frm" id="write_frm">
+		<div id="userInfo">
+			<div class="login_pw-appbar">
+				<a onclick="move_pw_search_step1();" style="cursor: pointer;">
+					<i class="isiz32 ph-arrow-left-thin"></i>
+				</a>
+			</div>
+			<!-- 비밀번호 변경 요청 -->
+			<div id="change_request" style="display: none;">
+				<div class="wrap_title">
+					<p>{=langs('wm_login_ttl9')}</p>
+					<p class="title-sub14">{=langs('wm_login_msg8')}</p>
+				</div>
+				<div class="pw_request-container">
+					<div class="pw_request-box">
+						<p class="pw_tit">{=langs('wm_opt_msg38')}</p>
+						<div class="pw_adm-select">
+							<select name="mail_adm" id="mail_adm" data-class="noevent">
+								{? count(email_adm_list)==1}
+									{@ email_adm_list}
+									<option value = "{.seq}">{.adm_name} &lt;{.adm_id}&gt;</option>
+									{/}
+								{:}
+									<option value="" selected disabled hidden>{=langs('select')}</option>
+									{@ email_adm_list}
+									<option value = "{.seq}">{.adm_name} &lt;{.adm_id}&gt;</option>
+									{/}
+								{/}
+							</select>
+						</div>
+					</div>
+					<div class="pw_request-box">
+						<p class="pw_tit">{= langs('wm_login_msg6')}<span class="input-necessary">*</span></p>
+						<div class="pw_info-input">
+							<input type="text" name="req_comment" id="comment" class="input_type1" title="{=langs('wm_opt_msg25')}" placeholder="{=langs('wm_opt_msg25')}">
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 본인 인증 -->
+			<div id="identity_verification" style="display: none;">
+				<div class="wrap_title">
+					<p>{= langs('ttl_accessLogin1')}</p>
+					<p class="title-sub14">{=langs('wm_login_ttl8')}</p>
+				</div>
+				<div class="content-input" style="display: none;">
+					<div class="input_toast-error">
+						<i class="ph-x-circle-fill"></i>
+						<p>{=langs('wm_login_msg5')}</p>
+					</div>
+				</div>	
+				<div class="authentication_content">
+					{? get_code_name('config', 'CUSTOM_hidden_pw_phone') != '1'}
+					<div id="auth_box_hp" class="authentication_box">
+						<input type="radio" name="type" id="radio_type_hp" value="hp" data-masking="{= result_hp_masking}" disabled />
+						<label id="radio_type_hp_label" class="con-disabled" for="radio_type_hp"> <!-- 비활성될 경우 해당 class 실행되어야 함 > class="con-disabled" -->
+							<div class="radio_content">
+								<i class="isiz24 ph-device-mobile-thin"></i>
+								{=langs('wm_opt_msg23')}
+								<span id="ph_span" class="txt_phone-mail">
+									<span class="disabled-span">({=langs('msg_not_available')})</span>
+								</span>
+							</div>
+						</label>
+					</div>
+					{/}
+					<div id="auth_box_email" class="authentication_box">
+						<input type="radio" name="type" id="radio_type_email" value="email" data-masking="{= result_email_masking}" disabled />
+						<label id="radio_type_email_label" class="con-disabled" for="radio_type_email">  <!-- 비활성될 경우 해당 class 실행되어야 함 > class="con-disabled" -->
+							<div class="radio_content">
+								<i class="isiz24 ph-envelope-simple-thin"></i>
+								{=langs('wm_opt_msg24')}
+								<span id="mail_span" class="txt_phone-mail">
+									<span class="disabled-span">({=langs('csv_msg_unregit')})</span>
+								</span>
+							</div>
+						</label>
+					</div>
+				</div>
+				<div class="pw_code-box" style="display: none;">
+					<input type="text" order="1" id="pw_auth_code1" class="box_input" maxlength="1">
+					<input type="text" order="2" id="pw_auth_code2" class="box_input" maxlength="1">
+					<input type="text" order="3" id="pw_auth_code3" class="box_input" maxlength="1">
+					<input type="text" order="4" id="pw_auth_code4" class="box_input" maxlength="1">
+					<input type="text" order="5" id="pw_auth_code5" class="box_input" maxlength="1">
+					<input type="text" order="6" id="pw_auth_code6" class="box_input" maxlength="1">
+				</div>
+			</div>
+		</div>
+		<div class="login_btn btn-padding-56">
+			<button type="button" id="req_pw_change" class="btn blue" title="{=langs('wm_login_ttl9')}" style="display: none;" disabled>{=langs('wm_login_ttl9')}</button>
+			{? get_code_name('config', 'CUSTOM_hidden_pw_phone') != '1'}
+			<button type="button" id="send_pw_change_phone" class="button small" title="{=langs('wm_btn2')}" style="display: none; background: #000; cursor: pointer"><span style="color: #ffffff;">{=langs('wm_btn2')}</span></button>
+			{/}
+			<button type="button" id="send_pw_change_mail" class="button small" title="{=langs('wm_btn2')}" style="display: none; background: #000; cursor: pointer"><span style="color: #ffffff;">{=langs('wm_btn2')}</span></button>
+			<button type="button" id="send_pw_auth_code" class="btn btn_disabled" title="{=langs('wm_btn1')}" style="display: none; background: #e9e9e9; cursor: not-allowed;" disabled>{= langs('wm_btn1')}</button>
+		</div>
+		<div id="resend_pw_change" class="info_btn-move-login" style="display: none;">
+			<button title="{=langs('wm_btn3')}">{=langs('wm_btn3')}</button>
+		</div>
+		<div class="info_btn-move-login">
+			<a href="/member/do_logout" title="{=langs('overlap_btn')}" tabindex="0">{=langs('overlap_btn')}</a>
+		</div>
+	</form>
+</div>
+	{? SERVER_TYPE != 'RESELLER2'}
+	{? get_code_name('config', 'CUSTOM_copyrightremove') != 'Y'}
+		<div id="copyright-gray">
+			{? get_code_name('config', 'CUSTOM_copyrightText') == ''}
+			<p>© MAILPLUG Inc. All rights reserved.</p>
+			{:}
+			<p>{= get_code_name('config', 'CUSTOM_copyrightText')}</p>
+			{/}
+		</div>
+	{/}
+	{/}
+</div>

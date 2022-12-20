@@ -1,0 +1,464 @@
+<!-- 로그인 화면 (pc) -->
+<script src="https://unpkg.com/phosphor-icons"></script>
+
+{loginscript}
+
+<div id="mb-auth-bg">
+	<div class="mb-login-wrapper">
+		<div class="mb-login-content">
+			<div class="mb-auth-lang-selector">
+				<div id="mb-auth-lang-selector-opener" class="mb-auth-lang" tabindex="0">
+					{= langs('selected_lang')}
+					<span class="select_icon">
+						<img src="/asset/wm60/images/login_CI/icon_selected_arrow-light.svg" alt="다국어 아이콘">
+					</span>
+				</div>
+				<div id="mb-auth-lang-slider">
+					<a href="javascript:language_select('kr');"><div class="mb-auth-lang"{? lang == 'kr'}style='background-color: #FFFAF2; color: #FF6412'{/}>{= langs('lang_kr')}</div></a>
+					<a href="javascript:language_select('en');"><div class="mb-auth-lang"{? lang == 'en'}style='background-color: #FFFAF2'{/}>{= langs('lang_en')}</div></a>
+					<a href="javascript:language_select('jp');"><div class="mb-auth-lang"{? lang == 'jp'}style='background-color: #FFFAF2'{/}>{= langs('lang_jp')}</div></a>
+					<a href="javascript:language_select('cng');"><div class="mb-auth-lang"{? lang == 'cng'}style='background-color: #FFFAF2'{/}>{= langs('lang_cng')}</div></a>
+					<a href="javascript:language_select('cnb');"><div class="mb-auth-lang"{? lang == 'cnb'}style='background-color: #FFFAF2'{/}>{= langs('lang_cnb')}</div></a>
+					<a href="javascript:language_select('vn');"><div class="mb-auth-lang"{? lang == 'vn'}style='background-color: #FFFAF2'{/}>{= langs('lang_vn')}</div></a>
+					<a href="javascript:language_select('idn');"><div class="mb-auth-lang"{? lang == 'idn'}style='background-color: #FFFAF2'{/}>{= langs('lang_idn')}</div></a>
+					<a href="javascript:language_select('th');"><div class="mb-auth-lang"{? lang == 'th'}style='background-color: #FFFAF2'{/}>{= langs('lang_th')}</div></a>
+				</div>
+			</div>
+			<div class="mb-auth-login-wrapper">
+				<div id="mb-auth-wrapper" class="login {? user_photo}bor-radi0{/}">
+					<div id="mb-auth-logo-area" class="ellipsis">
+						{? get_code_name('config','UI_logo') == 'text'}
+							{? logo_value}
+								<p class="logo_text" style="font-family:'Spoqa Han Sans Neo','Poppins','AppleSDGothic','apple sd gothic neo','noto sans korean','Noto Sans KR','noto sans cjk kr','noto sans cjk','nanum gothic','malgun gothic','dotum',arial,helvetica,'MS Gothic',sans-serif; font-weight:700; font-size:32px; line-height:48px; color:#241E17; padding-left:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+									{=logo_value}
+								</p>
+							{:}
+								&nbsp;
+							{/}
+						{: get_code_name('config','UI_logo') == 'image'}
+							{? get_code_name('config', 'CUSTOM_maintopbanner') != ''}
+								<a href="{= get_code_name('config', 'CUSTOM_maintopbanner')}" target="_blank" title="{= get_code_name('config', 'CUSTOM_maintopbanner')}">{logo_value}</a>
+							{:}
+								{logo_value}
+							{/}
+						{:}
+							{=get_code_name('server','org_name')}
+						{/}
+
+						{? get_code_name('config', 'CUSTOM_loginlogoaddbtn2') != ''}
+							{= get_code_name('config', 'CUSTOM_loginlogoaddbtn2')}
+						{/}
+
+						{? get_code_name('config', 'CUSTOM_loginlogoaddbtn1') != ''}
+							<a href="{= logo_btn_link}" target="_blank">
+								<img src="/userImg/{DOMAIN}/{= logo_btn_image}" />
+							</a>
+						{/}
+
+						{? get_code_name('config', 'CUSTOM_loginlogolink') != ''}
+							<a href="{= get_code_name('config', 'CUSTOM_loginlogolink')}" target="_blank"><span>EHR</span></a>
+						{/}
+					</div>
+
+					<div id="mb-auth-input-area">
+						<div id="mb-auth-message-box" {? !_REQUEST['result']}class="initial"{/}>
+							<i class="ph-x-circle-fill"></i>
+							<span>{= langs('loginstart')}</span>
+						</div>
+						{? login_limit_set != "UNLIMIT"}
+						<form name="frmlogin" id="frmlogin" method="post" action="{? https != ''}{https}/api/loginset.php{:}/member/do_login{/}" onsubmit="return do_login();">
+							<input type="hidden" name="{csrf_token_name}" value="{csrf_hash}">
+								<input type="hidden" name="http_host" value="{HTTP_HOST}">
+								<input type="hidden" name="domain" value="{DOMAIN}">
+								<input type="hidden" name="myvalue" value="{myvalue}">
+								<input type="hidden" name="capcha_code" value="">
+								<input type="hidden" name="language_select" id="language_select" value="">
+								<input type="hidden" name="host_domain" id="host_domain" value="{= _GET['host_domain']}">
+
+								<div class="mb-auth-textinput-area id">
+									{? get_code_name('config', 'CUSTOM_server_type') == 'inu'}
+									<style>
+										#cid::placeholder {color: red;}
+										#cid::-webkit-input-placeholder {color: red;}
+										#cid:-ms-input-placeholder {color: red;}
+									</style>
+									<input class="textinput {? _GET['host_domain']}domain_pad{/}" type="text" name="cid" id="cid" placeholder="{=langs('id')}(사번이 아닙니다.)" title="{= langs('userinfo_id')}" value="{? _GET['cid'] != ''}{= _GET['cid']}{:}{? COOKIE['rememberid']}{COOKIE['rememberid']}{/}{/}" />
+									{:}
+									<input class="textinput {? _GET['host_domain']}domain_pad{/}" type="text" name="cid" id="cid" placeholder={? get_code_name('config', 'CUSTOM_login_type') == 'sabeon'}"{=langs('wm_opt_msg13')}"{:}"{=langs('wm_opt_msg1')}"{/} title="{= langs('userinfo_id')}" value="{? _GET['cid'] != ''}{= _GET['cid']}{:}{? COOKIE['rememberid']}{COOKIE['rememberid']}{/}{/}" />
+									{/}
+									{? _GET['host_domain']}
+									<div class="id_input_domain" style="display:block;" title={= _GET['host_domain']}>@{= _GET['host_domain']}</div>
+									{/}
+								</div>
+								<div class="mb-auth-textinput-area lw_pw">
+									<input class="textinput" type="password" autocomplete="off" name="cpw" id="cpw" placeholder="{=langs('wm_opt_msg3')}" title="{= langs('wm_opt_msg3')}" value="{= _GET['cpw']}"/>
+									<!-- [P] 비밀번호 감추기/보이기 아이콘 노출 -->	
+									<i id="eye" class="isiz24 ph-eye-slash-thin eye1" style="display:none"></i>
+								</div>
+								<div class="captcha">
+									{? atoken}
+									<p class="mb-auth-captcha-message">{= langs('secure_code_input3')}</p>
+
+									<div class="mb-auth-captcha-image-button">
+										<img id="captcha-img" src="{= CAPTCHA_URL}?atoken={atoken}&lw_domain={= _SERVER['HTTP_HOST']}&lw_cid={= _COOKIE['PHPSESSID']}&re&lw_img" alt="{= langs('here_click_plz')}" title="SpamFree.kr" style="border: none; cursor: pointer" onclick="reload_captcha();" />
+										<span id="captcha-reload-button" onclick="reload_captcha();"><i class="isiz24 ph-arrows-clockwise-light"></i></span>
+									</div>
+
+									<input class="mb-auth-captchainput" type="text" name="captcha_code_input" id="captcha_code_input" placeholder="{=langs('wm_btn10')}" title="{= langs('wm_btn10')}" />
+									{/}
+								</div>
+								<div id="mb-auth-account-area">
+									<input type="checkbox" name="rememberid" id="rememberid" value="1" {? COOKIE['rememberid']}checked="checked"{/} />
+									<label id="rememberid-label" for="rememberid"><span tabindex="0"></span>{= langs('remain_id2')}</label>
+									<div class="right-btn">
+										{? get_code_name('config','CUSTOM_hiddenidresResult') != 'Y'}
+											{? get_code_name('config','CONFIG_idresResult') == 'on'}
+												{? show_user_join}
+													<a href="javascript:;" id="pop_join" class="mb-auth-register">{= langs('id_regist')}</a>
+												{/}
+											{/}
+										{/}
+										{? get_code_name('config','CUSTOM_hiddenidPwfind') != 'Y'}
+											{? get_code_name('config','CONFIG_idPwfind') =='on'}
+											<a href="javascript:;" id="pop_pw_search" class="mb-auth-findpw">{= langs('findpassword')}</a>
+											{/}
+										{/}
+									</div>
+								</div>
+								<button type="submit" id="btnlogin" class="mb-auth-login-button" style="cursor: not-allowed;" disabled/>{= langs('logintitle')}</button>
+								<div id="mb-auth-footer-area">
+									<a id="change_domain" title="{=langs('wm_btn8')}" onclick="redirect_login_step1();" tabindex="0">{=langs('wm_btn8')}</a>
+								</div>	
+						</form>
+						{/}
+					</div>
+				</div>
+
+				{? user_photo}
+				<div id="mb-auth-wrapper-right-img" style="background-image: url({user_photo})">
+				</div>
+				{/}
+			</div>
+			<div class="mb-login-footer">
+				{? get_code_name('config','CUSTOM_user_msg')}
+				<div id="user_msg" class="user_msg p_top25">
+					<!-- {?lang != 'kr' && get_code_name('config','CUSTOM_user_msg_sub')}
+						{= get_code_name('config','CUSTOM_user_msg_sub')}
+					{:}
+						{= get_code_name('config','CUSTOM_user_msg')}
+					{/} -->
+
+					<!-- use_msg : type1 -->
+					<div style="padding-top:16px; ">
+						<div style="display:flex; flex-flow:column; font-weight:400; font-size:14px; line-height:22px; border-radius:8px; padding:20px 18px; color:#241E17; background-color:#ffffff; text-align:center;">
+							<div style="display:flex; justify-content:center; padding-bottom:12px;">
+								<div style="display:flex; width:100%; justify-content:space-between; line-height:22px;">
+									<p>신규 회원이신가요?</p>
+										<a href="#" target="_blank" title="통합포털" style="color:#2460DB; text-decoration:underline;">
+											<span>통합포털</span>
+											<img style="display:inline-block; vertical-align:text-bottom;" src="/asset/wm60/images/login_CI/user_msg_icon-link.svg" alt="링크">
+										</a>
+								</div>
+							</div>
+							<div style="font-size:12px; line-height:18px; color:#757575">
+								고객센터 : <span style="font-size:14px; line-height:22px; color:#FF6412;">1<span style="font-weight:700; font-size:16px; line-height:24px">66</span>8-2590</span> | 정보화본부 : <span style="font-size:14px; line-height:22px; color:#FF6412;">033-640-2625</span>
+							</div>
+						</div>
+					</div>
+
+					<!-- use_msg : type2 -->
+					<!-- <div style="padding-top:16px; ">
+						<div style="display:flex; flex-flow:column; font-weight:400; font-size:14px; line-height:22px; border-radius:8px; padding:20px 18px; color:#241E17; background-color:#ffffff; text-align:center;">
+							<div style="display:flex; justify-content:center; padding-bottom:12px;">
+								<div style="display:flex; width:100%; justify-content:space-between; line-height:22px;">
+									<p>신규 회원이신가요?</p>
+										<a href="#" target="_blank" title="K-Cloud" style="color:#2460DB; text-decoration:underline;">
+											<span>K-Cloud</span>
+											<img style="display:inline-block; vertical-align:text-bottom;" src="/asset/wm60/images/login_CI/user_msg_icon-link.svg" alt="링크">
+										</a>
+								</div>
+								<p style="padding:0 44px; color:#C7C7C7">|</p>
+								<div style="display:flex; width:100%; justify-content:space-between;  line-height:22px;">
+									<p>사용 방법이 궁금하신가요?</p>
+									<a href="#" target="_blank" title="웹메일 매뉴얼" style="color:#2460DB; text-decoration:underline;">
+										<span>웹메일 매뉴얼</span>
+										<img style="display:inline-block; vertical-align:text-bottom;" src="/asset/wm60/images/login_CI/user_msg_icon-link.svg" alt="링크">
+									</a>
+								</div>
+							</div>
+							<div style="font-size:12px; line-height:18px; color:#757575">
+								고객센터 : <span style="font-size:14px; line-height:22px; color:#FF6412;">1<span style="font-weight:700; font-size:16px; line-height:24px">66</span>8-2590</span> | 정보화본부 : <span style="font-size:14px; line-height:22px; color:#FF6412;">570-6283</span>
+							</div>
+						</div>
+					</div> -->
+
+					<!-- use_msg : type3 -->
+					<!-- <div style="padding-top:16px; ">
+						<div style="display:flex; flex-flow:column; font-weight:400; font-size:14px; line-height:22px; border-radius:8px; padding:20px 18px; color:#241E17; background-color:#ffffff; text-align:center;">
+							<div style="display:flex; justify-content:center; padding-bottom:12px;">
+								<div style="display:flex; width:100%; justify-content:space-between; line-height:22px;">
+									<p>학생이신가요?</p>
+										<a href="#" target="_blank" title="학생포털" style="color:#2460DB; text-decoration:underline;">
+											<span>학생포털</span>
+											<img style="display:inline-block; vertical-align:text-bottom;" src="/asset/wm60/images/login_CI/user_msg_icon-link.svg" alt="링크">
+										</a>
+								</div>
+								<p style="padding:0 44px; color:#C7C7C7">|</p>
+								<div style="display:flex; width:100%; justify-content:space-between;  line-height:22px;">
+									<p>직원이신가요?</p>
+									<a href="#" target="_blank" title="업무포털" style="color:#2460DB; text-decoration:underline;">
+										<span>업무포털</span>
+										<img style="display:inline-block; vertical-align:text-bottom;" src="/asset/wm60/images/login_CI/user_msg_icon-link.svg" alt="링크">
+									</a>
+								</div>
+							</div>
+							<div style="display:flex; justify-content:center; padding-bottom:12px;">
+								<div style="display:flex; width:100%; justify-content:space-between; line-height:22px;">
+									<p>2차 인증(OTP)이 궁금하신가요?</p>
+										<a href="#" target="_blank" title="등록 및 사용 매뉴얼" style="color:#2460DB; text-decoration:underline;">
+											<span>등록 및 사용 매뉴얼</span>
+											<img style="display:inline-block; vertical-align:text-bottom;" src="/asset/wm60/images/login_CI/user_msg_icon-link.svg" alt="링크">
+										</a>
+								</div>
+							</div>
+							<div style="font-size:12px; line-height:18px; color:#757575">
+								고객센터 : <span style="font-size:14px; line-height:22px; color:#FF6412;">1<span style="font-weight:700; font-size:16px; line-height:24px">66</span>8-2590</span> | 정보화본부 : <span style="font-size:14px; line-height:22px; color:#FF6412;">053-950-4000</span>
+							</div>
+						</div>
+					</div> -->
+
+					<!-- use_msg : type4 -->
+					<!-- <div style="padding-top:16px; ">
+						<div style="display:flex; flex-flow:column; font-weight:400; font-size:14px; line-height:22px; border-radius:8px; padding:20px 18px; color:#241E17; background-color:#ffffff; text-align:center;">
+							<div style="display:flex; justify-content:center; padding-bottom:12px;">
+								<div style="display:flex; width:100%; justify-content:space-between; line-height:22px;">
+									<p>신규 회원이신가요?</p>
+										<a href="#" target="_blank" title="포털시스템" style="color:#2460DB; text-decoration:underline;">
+											<span>포털시스템</span>
+											<img style="display:inline-block; vertical-align:text-bottom;" src="/asset/wm60/images/login_CI/user_msg_icon-link.svg" alt="링크">
+										</a>
+								</div>
+								<p style="padding:0 44px; color:#C7C7C7">|</p>
+								<div style="display:flex; width:100%; justify-content:space-between;  line-height:22px;">
+									<p>기존 웹메일 사용자이신가요?</p>
+									<a href="#" target="_blank" title="Old Email" style="color:#2460DB; text-decoration:underline;">
+										<span>Old Email</span>
+										<img style="display:inline-block; vertical-align:text-bottom;" src="/asset/wm60/images/login_CI/user_msg_icon-link.svg" alt="링크">
+									</a>
+								</div>
+							</div>
+							<div style="font-size:12px; line-height:18px; color:#757575">
+								고객센터 : <span style="font-size:14px; line-height:22px; color:#FF6412;">1<span style="font-weight:700; font-size:16px; line-height:24px">66</span>8-2590</span> | <span style="font-family:'Poppins' !important; line-height:22px;">help@kunsan.ac.kr</span> | IT 서비스센터 : <span style="font-size:14px; line-height:22px; color:#FF6412;">내선 1004</span>
+							</div>
+						</div>
+					</div> -->
+
+					<!-- use_msg : type5 -->
+					<!-- <div style="padding-top:16px; ">
+						<div style="display:flex; flex-flow:column; font-weight:400; font-size:14px; line-height:22px; border-radius:8px; padding:20px 18px; color:#241E17; background-color:#ffffff; text-align:center;">
+							<div style="display:flex; justify-content:center; padding-bottom:12px;">
+								<div style="display:flex; width:100%; justify-content:space-between; line-height:22px;">
+									<p>G Suite 사용 방법이 궁금하신가요? </p>
+										<a href="#" target="_blank" title="G Suite 매뉴얼" style="color:#2460DB; text-decoration:underline;">
+											<span>G Suite 매뉴얼</span>
+											<img style="display:inline-block; vertical-align:text-bottom;" src="/asset/wm60/images/login_CI/user_msg_icon-link.svg" alt="링크">
+										</a>
+								</div>
+							</div>
+							<div style="font-size:12px; line-height:18px; color:#757575">
+								고객센터 : <span style="font-size:14px; line-height:22px; color:#FF6412;">1<span style="font-weight:700; font-size:16px; line-height:24px">66</span>8-2590</span> | 헬프데스크 : <span style="font-size:14px; line-height:22px; color:#FF6412;">교내 2000</span> | 정보화 본부 : <span style="font-family:'Poppins' !important; line-height:22px;">sysop@pusan.ac.kr</span> 
+							</div>
+						</div>
+					</div> -->
+
+					<!-- use_msg : type6 -->
+					<!-- <div style="padding-top:16px; ">
+						<div style="display:flex; flex-flow:column; font-weight:400; font-size:14px; line-height:22px; border-radius:8px; padding:20px 18px; color:#241E17; background-color:#ffffff; text-align:center;">
+							<div style="display:flex; justify-content:center; padding-bottom:12px;">
+								<div style="display:flex; width:100%; flex-flow:column; line-height:22px; border: 1px solid #E9E9E9; border-radius:8px; padding: 12px 24px 12px 18px; text-align:left;">
+									<p style="font-weight:700; padding-bottom:8px;">안내</p>
+										<ul style="list-style:disc;">
+											<li style="list-style-type:inherit; list-style-position: inside;">아이디는 교번을 입력해 주세요.</li>
+										</ul>
+								</div>
+							</div>
+							<div style="font-size:12px; line-height:18px; color:#757575">
+								교무처(교육정보팀) : <span style="font-size:14px; line-height:22px; color:#FF6412;">내선 181, 183</span>
+							</div>
+						</div>
+					</div> -->
+					
+					<!-- use_msg : type7 -->
+					<!-- <div style="padding-top:16px; ">
+						<div style="display:flex; flex-flow:column; font-weight:400; font-size:14px; line-height:22px; border-radius:8px; padding:20px 18px; color:#241E17; background-color:#ffffff; text-align:center;">
+							<div style="display:flex; justify-content:center; padding-bottom:12px;">
+								<div style="display:flex; width:100%; flex-flow:column; line-height:22px; border: 1px solid #E9E9E9; border-radius:8px; padding: 12px 24px 12px 18px; text-align:left;">
+									<p style="font-weight:700; padding-bottom:8px;">안내</p>
+										<ul style="list-style:disc;">
+											<li style="list-style-type:inherit; list-style-position: inside;">아이디는 @geps.or.kr 빼고 입력해 주세요.</li>
+										</ul>
+								</div>
+							</div>
+							<div style="font-size:12px; line-height:18px; color:#757575">
+								고객센터: <span style="font-size:14px; line-height:22px; color:#FF6412;">1<span style="font-weight:700; font-size:16px; line-height:24px">66</span>8-2590</span>
+							</div>
+						</div>
+					</div> -->
+
+					<!-- use_msg : type8 -->
+					<!-- <div style="padding-top:16px; ">
+						<div style="display:flex; flex-flow:column; font-weight:400; font-size:14px; line-height:22px; border-radius:8px; padding:20px 18px; color:#241E17; background-color:#ffffff; text-align:center;">
+							<div style="font-size:12px; line-height:18px; color:#757575">
+								정보전산원 정보전산팀 : <span style="font-size:14px; line-height:22px; color:#FF6412;">02-970-5315, 5308, 5119</span> 
+							</div>
+						</div>
+					</div> -->
+
+					<!-- use_msg : type9 -->
+					<!-- <div style="padding-top:16px; ">
+						<div style="display:flex; flex-flow:column; font-weight:400; font-size:14px; line-height:22px; border-radius:8px; padding:20px 18px; color:#241E17; background-color:#ffffff; text-align:center;">
+							<div style="display:flex; justify-content:center; padding-bottom:12px;">
+								<div style="display:flex; width:100%; flex-flow:column; line-height:22px; border: 1px solid #E9E9E9; border-radius:8px; padding: 12px 24px 12px 18px; text-align:left;">
+									<p style="font-weight:700; padding-bottom:8px;">교직원 메일 시스템입니다.</p>
+										<ul style="list-style:disc;">
+											<li style="list-style-type:inherit; list-style-position: inside;">재학생은 [학사인트라] 홈페이지의 “오피스365” 서비스(메일)을 이용하시기 바랍니다.</li>
+										</ul>
+								</div>
+							</div>
+							<div style="font-size:12px; line-height:18px; color:#757575">
+								고객센터 : <span style="font-size:14px; line-height:22px; color:#FF6412;">1<span style="font-weight:700; font-size:16px; line-height:24px">66</span>8-2590</span> | 정보전산원 : <span style="font-size:14px; line-height:22px; color:#FF6412;">041-359-6027</span>
+							</div>
+						</div>
+					</div> -->
+
+					<!-- use_msg : type10 -->
+					<!-- <div style="padding-top:16px; ">
+						<div style="display:flex; flex-flow:column; font-weight:400; font-size:14px; line-height:22px; border-radius:8px; padding:20px 18px; color:#241E17; background-color:#ffffff; text-align:center;">
+							<div style="display:flex; justify-content:center; padding-bottom:12px;">
+								<div style="display:flex; width:100%; flex-flow:column; line-height:22px; border: 1px solid #E9E9E9; border-radius:8px; padding: 12px 24px 12px 18px; text-align:left;">
+									<p style="font-weight:700; padding-bottom:8px;">교직원 메일 시스템입니다.</p>
+								</div>
+							</div>
+							<div style="font-size:12px; line-height:18px; color:#757575">
+								고객센터 : <span style="font-size:14px; line-height:22px; color:#FF6412;">1<span style="font-weight:700; font-size:16px; line-height:24px">66</span>8-2590</span> | 정보전산원 : <span style="font-size:14px; line-height:22px; color:#FF6412;">041-540-5175</span>
+							</div>
+						</div>
+					</div> -->
+
+					<!-- use_msg : type11 -->
+					<!-- <div style="padding-top:16px; ">
+						<div style="display:flex; flex-flow:column; font-weight:400; font-size:14px; line-height:22px; border-radius:8px; padding:20px 18px; color:#241E17; background-color:#ffffff; text-align:center;">
+							<div style="display:flex; justify-content:center; padding-bottom:12px;">
+								<div style="display:flex; width:100%; justify-content:space-between; line-height:22px;">
+									<p>처음 접속하는 교직원이신가요?</p>
+										<a href="#" target="_blank" title="통합포털" style="color:#2460DB; text-decoration:underline;">
+											<span>통합포털</span>
+											<img style="display:inline-block; vertical-align:text-bottom;" src="/asset/wm60/images/login_CI/user_msg_icon-link.svg" alt="링크">
+										</a>
+								</div>
+								<p style="padding:0 44px; color:#C7C7C7">|</p>
+								<div style="display:flex; width:100%; justify-content:space-between;  line-height:22px;">
+									<p>학생이신가요?</p>
+									<a href="#" target="_blank" title="Gmail 학생 로그인" style="color:#2460DB; text-decoration:underline;">
+										<span>Gmail 학생 로그인</span>
+										<img style="display:inline-block; vertical-align:text-bottom;" src="/asset/wm60/images/login_CI/user_msg_icon-link.svg" alt="링크">
+									</a>
+								</div>
+							</div>
+							<div style="font-size:12px; line-height:18px; color:#757575">
+								고객센터 : <span style="font-size:14px; line-height:22px; color:#FF6412;">1<span style="font-weight:700; font-size:16px; line-height:24px">66</span>8-2590</span>
+							</div>
+						</div>
+					</div> -->
+
+					<!-- use_msg : type12 -->
+					<!-- <div style="padding-top:16px; ">
+						<div style="display:flex; flex-flow:column; font-weight:400; font-size:14px; line-height:22px; border-radius:8px; padding:20px 18px; color:#241E17; background-color:#ffffff; text-align:center;">
+							<div style="display:flex; justify-content:center; padding-bottom:12px;">
+								<div style="display:flex; width:100%; justify-content:space-between; line-height:22px;">
+									<p>학생이신가요?</p>
+										<a href="#" target="_blank" title="Gmail 학생 로그인" style="color:#2460DB; text-decoration:underline;">
+											<span>Gmail 학생 로그인</span>
+											<img style="display:inline-block; vertical-align:text-bottom;" src="/asset/wm60/images/login_CI/user_msg_icon-link.svg" alt="링크">
+										</a>
+								</div>
+								<p style="padding:0 44px; color:#C7C7C7">|</p>
+								<div style="display:flex; width:100%; justify-content:space-between;  line-height:22px;">
+									<p>신규회원이신가요?</p>
+									<a href="#" target="_blank" title="개신누리" style="color:#2460DB; text-decoration:underline;">
+										<span>개신누리</span>
+										<img style="display:inline-block; vertical-align:text-bottom;" src="/asset/wm60/images/login_CI/user_msg_icon-link.svg" alt="링크">
+									</a>
+								</div>
+							</div>
+							<div style="font-size:12px; line-height:18px; color:#757575">
+								고객센터 : <span style="font-size:14px; line-height:22px; color:#FF6412;">1<span style="font-weight:700; font-size:16px; line-height:24px">66</span>8-2590</span>
+							</div>
+						</div>
+					</div> -->
+
+					<!-- use_msg : type13 -->
+					<!-- <div style="padding-top:16px; ">
+						<div style="display:flex; flex-flow:column; font-weight:400; font-size:14px; line-height:22px; border-radius:8px; padding:20px 18px; color:#241E17; background-color:#ffffff; text-align:center;">
+							<div style="display:flex; width:100%; justify-content:space-between; line-height:22px; padding-bottom:12px;">
+								<p>처음 접속하는 교직원이신가요?</p>
+									<a href="#" target="_blank" title="청람포털" style="color:#2460DB; text-decoration:underline;">
+										<span>청람포털</span>
+										<img style="display:inline-block; vertical-align:text-bottom;" src="/asset/wm60/images/login_CI/user_msg_icon-link.svg" alt="링크">
+									</a>
+							</div>
+
+							<div style="display:flex; justify-content:center; padding-bottom:12px;">
+								<div style="display:flex; width:100%; flex-flow:column; line-height:22px; border: 1px solid #E9E9E9; border-radius:8px; padding: 12px 24px 12px 18px; text-align:left;">
+									<p style="font-weight:700; padding-bottom:8px;">교직원 최초 로그인 방법</p>
+										<ul style="list-style:disc;">
+											<li style="list-style-type:inherit; list-style-position: inside;">신규가입, 기존가입자(사번정확) : 청람포털서비스-웹메일-약관동의 후 사용 가능합니다.</li>
+											<li style="list-style-type:inherit; list-style-position: inside;">단체, 기타 : 공문, 코러스, 포털 게시판을 참조해 주세요.</li>
+										</ul>
+								</div>
+							</div>
+							<div style="font-size:12px; line-height:18px; color:#757575">
+								고객센터 : <span style="font-size:14px; line-height:22px; color:#FF6412;">1<span style="font-weight:700; font-size:16px; line-height:24px">66</span>8-2590</span>
+							</div>
+						</div>
+					</div> -->
+				</div>
+				{/}
+				{? SERVER_TYPE != 'RESELLER2'}
+				{? get_code_name('config', 'CUSTOM_copyrightremove') != 'Y'}
+					<div id="copyright">
+						{? get_code_name('config', 'CUSTOM_copyrightText') == ''}
+						<p>© MAILPLUG Inc. All rights reserved.</p>
+						{:}
+						<p>{= get_code_name('config', 'CUSTOM_copyrightText')}</p>
+						{/}
+					</div>
+				{/}
+				{/}
+			</div>
+		</div>	
+	</div>
+	<div class="login_wrapper" style="display:none">
+		<div class="login_dns_screen">
+			<div class="dns_screen_content">
+				<img src="/asset/wm60/images/login_CI/login_DNS_illust.svg" alt="DNS 미설정">
+				<div class="dns_content_txt">
+					<p>{=langs('wm_login_msg35')}</p>
+				</div>
+				<button class="btn-back" title="이전 단계로 돌아가기">{=langs('wm_btn9')}</button>
+				<div class="btn-skip">
+					<button title="{=langs('otp_pass')}">{=langs('otp_pass')}</button>
+				</div>
+				<div class="btn-hompage-go">
+					<a href="#" target="_blank" title="{=langs('gohomepagebtn')}">
+						<span>{=langs('gohomepagebtn')}</span>
+						<i class="ph-arrow-square-out"></i>
+					</a>
+				</div>
+			</div>
+			<div class="footer-copyright">
+				<p> MAILPLUG Inc. All rights reserved.</p>
+			</div>
+		</div>
+	</div>		
+</div>
