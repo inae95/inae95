@@ -1,0 +1,607 @@
+<!-- 아이디 신청 -->
+<script src="https://unpkg.com/phosphor-icons"></script>
+
+<script type="text/javascript" src="{= get_infover('/asset/wm60/js/jquery.form.min.js')}"></script>
+<script type="text/javascript" src="{= get_infover('/asset/wm60/js/jquery.fileupload.js')}"></script>
+<style>
+	body{min-width:unset}
+</style>
+<body>
+	<!-- personal information -->
+	<div class="join_wrapper">
+		<form name="write_frm" id="write_frm">
+			<input type="hidden" name="{csrf_token_name}" value="{csrf_hash}">
+			<input type="hidden" name="mode" value="write">
+			<input type="hidden" name="seq" id="seq" value="">
+			<input type="hidden" name="dup_chk" id="dup_chk" value="" validate="required:{= langs('id_check')}" />
+			<input type="hidden" name="user_add_join_write" value="Y" />
+			<input type="hidden" name="user_mode" value="Y" />
+			<input type="hidden" id="pw_chk" value="" />
+			{? server_type == 'PNU'}
+			<input type="hidden" name="active" value="Y">
+			<input type="hidden" name="agree_date" value="{= date('Y-m-d H:i:s')}">
+			<input type="hidden" name="access_date" value="{= time()}">
+			<input type="hidden" name="redirect" value="/member/join">
+			{: prepared_info.sabeon != ""}
+			<input type="hidden" name="agree_date" value="{= date('Y-m-d H:i:s')}">
+			<input type="hidden" name="access_date" value="{= time()}">
+			{? prepared_info.active != ""}
+			<input type="hidden" name="active" value="{= prepared_info.active}">
+			<input type="hidden" name="redirect" value="/">
+			{:}
+			<input type="hidden" name="active" value="W">
+			<input type="hidden" name="redirect" value="/member/join_search">
+			{/}
+			{? prepared_info.not_pass_md5 != ""}<input type="hidden" name="not_pass_md5" value="{= prepared_info.not_pass_md5}">{/}
+			{? prepared_info.pass_nocheck != ""}<input type="hidden" name="pass_nocheck" value="{= prepared_info.pass_nocheck}">{/}
+			{? prepared_info.ai_etc6 != ""}<input type="hidden" name="ai_etc6" value="{= prepared_info.ai_etc6}">{/}
+			{? prepared_info.ai_etc7 != ""}<input type="hidden" name="ai_etc7" value="{= prepared_info.ai_etc7}">{/}
+			{:}
+			<input type="hidden" name="active" value="W">
+			<input type="hidden" name="redirect" value="/member/join_search">
+			{/}
+			<div class="join_step1">
+				<div class="join_wrap-info">
+					<div class="topMenuList">
+						<a href="/member/join_search" style="color:#64553F;" tabindex="1">
+							{=langs('wm_login_ttl5')}
+						</a>
+					</div>
+					<!-- step1 : 개인 정보 입력 -->
+					<div class="join_step1" style="display:block;">
+						<div class="join_step-bar">
+							<div class="step-bar-left"></div>
+							<div class="step-bar-right"></div>
+						</div>
+						<div class="wrap_title">
+							<p>{=langs('wm_login_ttl2')}</p>
+							<p class="wrap_title-sub">{=langs('wm_login_ttl3')}</p>
+						</div>
+						<table class="t_type1" cellpadding="0" cellspacing="0" summary="{= langs('userinfo_onlyid')}, {= langs('userinfo_pass')}, {= langs('userinfo_repass')}, {= langs('userinfo_name')}, {= langs('userinfo_photo')}, {= langs('userinfo_birth')}, {= langs('userinfo_hp')}, {= langs('userinfo_tel')}, {= langs('userinto_email')}, {= langs('userinfo_zip')}, {= langs('userinfo_address')}, {= langs('userinfo_comno')}, {= langs('userinfo_grade')}, {= langs('sosok')}, {= langs('userinfo_group')}, {= langs('userinfo_workreview')}">
+							<colgroup>
+								<col width="174px" /><col width="*" />
+							</colgroup>
+							<tbody>
+								<tr>
+									<th class="in_button" scope="row">
+										<div class="th_tit-align">
+											<p class="th_tit-height">
+												{= langs('userinfo_onlyid')}<span class="input-necessary">*</span>
+											</p>
+										</div>
+									</th>
+									<td class="in_button">
+										<input type='text' name='id' id="id" class='input_type1' title="{= langs('wm_opt_msg1')}" placeholder="{= langs('wm_opt_msg1')}" validate="required:{= langs('check_id')}||minlength:{id_min_length}:{id_min_message}||maxlength:50:{= langs('check_pw_need3')}||user_id:{= langs('join_intro')}" maxlength="50"  tabindex="1" />
+										<!-- <button type="button" id="id_duplicate" class="button small white"><span>{= langs('admin_join_msg1')}</span></button> -->
+										{? get_code_name('config', 'CUSTOM_server_type') == 'SWU'}<span class="txtSet">개인정보보호를 위해 교번/학번으로 아이디 신청은 불가합니다.</span>{/}
+										<div class="validation-list">
+											<p class="validation-text txt-fail" id="lbl_inputidmsg">
+												<i class="isiz18 ph-x-circle-light"></i> 
+												<span>
+												{? server_type == 'PNU'}
+													{= str_replace("1~50", "5~50", langs('join_intro'))}
+												{:}
+													{= langs('join_intro')}
+												{/}
+												</span>
+											</p>
+											<p class="validation-text txt-fail" id="dup_inputidmsg" style="display: none;">
+												<i class="isiz18 ph-x-circle-light"></i>{=langs('error_register_faildupleid')}
+											</p>
+											<p class="validation-text txt-suc" id="validate_ok_id">
+												<i class="isiz18 ph-check-circle-light"></i>{=langs('login_okid')}
+											</p>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<th class="in_button" rowspan="1" class="in_button p-right15" scope="row">
+										<div class="th_tit-align">
+											<p class="th_tit-height">
+												{= langs('userinfo_pass')}<span class="input-necessary">*</span>
+											</p>
+										</div>
+									</th>
+									<td class="in_button in_button_password-icon">
+										<input type='password' autocomplete="off" name='passwd' id="passwd" class='input_type1' title="{= langs('wm_opt_msg3')}" placeholder="{= langs('wm_opt_msg3')}" validate="required:{= langs('check_pw')}||minlength:4:{= langs('txtChkPassCnt')}||maxlength:20:{= langs('txtChkPassCnt')}}"  tabindex="2"  />
+										<!-- [P] 비밀번호 감추기/보이기 아이콘 -->
+										<i id="eye" class="isiz24 ipad12 ph-eye-slash-thin eye1" style="display:none;"></i>
+										{? get_code_name('config', 'CUSTOM_pw_level') == 1 || get_code_name('config','CUSTOM_passsecurity') == "N"}
+										<div id="pw_validation1">
+											{? get_code_name('config', 'CUSTOM_pw_level') == 1}
+											<div id="pw_combination_validation" class="validation-list" style="height:auto;">
+												<i class="isiz18 ph-check-circle-light"></i>
+												<p class="validation-text">{=langs('wm_opt_msg2')}</p>
+											</div>
+											{/}
+											<div id="pw_length_validation" class="validation-list" style="height:auto;">
+												<i class="isiz18 ph-check-circle-light"></i>
+												<p class="validation-text">
+													{? get_code_name('config', 'CUSTOM_pw_level') == 1}
+														{=langs('wm_opt_msg32')}
+													{:}
+														{=langs('wm_opt_msg42')}
+													{/}
+												</p>
+											</div>
+											<div id="pw_privacy_validation" class="validation-list" style="height:auto;">
+												<i class="isiz18 ph-check-circle-light"></i>
+												<p class="validation-text">{=langs('wm_opt_msg33')}</p>
+											</div>
+										</div>
+										{:}
+										<div id="pw_validation2">
+											<div id="pw_combination_validation" class="validation-list" style="height:auto;">
+												<i class="isiz18 ph-check-circle-light"></i>
+												<p class="validation-text">
+													{? get_code_name('config', 'CUSTOM_pw_level') == 2}
+														{= langs('check_pw_msg4')} {= langs('check_pw_msg1')}
+													{:}
+														{=langs('wm_opt_msg43')}
+													{/}
+												</p>
+											</div>
+											<div id="pw_privacy_validation" class="validation-list" style="height:auto;">
+												<i class="isiz18 ph-check-circle-light"></i>
+												<p class="validation-text">{= langs('check_pw_msg6')}</p>
+											</div>
+											<div id="pw_repeat_validation" class="validation-list">
+												<i class="isiz18 ph-check-circle-light"></i>
+												<p class="validation-text">{= langs('check_pw_msg7')}</p>
+											</div>
+										</div>
+										{/}
+									</td>
+								</tr>
+								<tr>
+									<th class="in_button padding-bot-40" scope="row">
+										<div class="th_tit-align">
+											<p class="th_tit-height">
+												{= langs('userinfo_name')}<span class="input-necessary">*</span>
+											</p>
+										</div>
+									</th>
+									<td class="in_button padding-bot-40">
+									{? prepared_info.name}
+										<input type="hidden" name="name" value="{prepared_info.name}" readonly >
+										<span>{prepared_info.name}</span>
+									{:}
+										<input type='text' name='name' class='input_type1' id="input_name" title="{=langs('wm_opt_msg34')}" placeholder="{=langs('wm_opt_msg34')}" value="{info.name}" validate="required:{= langs('check_name')}||user_name:{= langs('login_chkname')}" maxlength="50" {? get_code_name('config', 'CUSTOM_server_type') == 'GGU'}readonly{/}  tabindex="3"  />
+									{/}
+									</td>
+								</tr>
+								{? options.email != 'N'}
+								<tr>
+									<th class="in_button" scope="row">
+										<div class="th_tit-align">
+											<p class="th_tit-height">
+												{= langs('wm_thead1')} {? options.email == 'Y' || options.email == 'R'}<span id="email_necessary" class="input-necessary">*</span>{/}
+											</p>
+										</div>
+									</th>
+									<td class="in_button">
+										<input type='text' name='email' id='userinfo_email' value="{info.email}" class='input_type1' title="{= langs('wm_opt_msg5')}" placeholder="{= langs('wm_opt_msg5')}" {? options.email == 'Y' || options.email == 'R'}validate="required:{= langs('login_chkemail')}"{/}  tabindex="4" />
+										<div class="validation-list" style="height:auto;">
+											<p class="input_helper-txt" id="mail_info">{=langs('wm_opt_msg6')}</p>
+											<p class="validation-text txt-fail" id="not_mail_error" style="display:none;">
+												<i class="isiz18 ph-check-circle-light"></i>{= langs('errror_no_email')}
+											</p>
+										</div>
+									</td>
+								</tr>
+								{/}
+								{? options.hp != 'N' }
+								<tr>
+									<th class="in_button" scope="row">
+										<div class="th_tit-align">
+											<p class="th_tit-height">
+												{= langs('userinfo_hp')}{? options.hp == 'Y' || options.hp == 'R'}<span id="hp_necessary" class="input-necessary">*</span>{/}
+											</p>
+										</div>
+									</th>
+									<td class="in_button">
+										<input type='text' name='hp' value="{info.hp}" id="userinfo_contact_hp" class='input_type2' title="{=langs('wm_opt_msg7')}" placeholder="{=langs('wm_opt_msg7')}" {? options.hp == 'Y' || options.hp == 'R'}validate="required:{= langs('loginneedhp')}"{/} tabindex="5"/>
+										<div class="validation-list" style="height:auto;">
+											<p class="input_helper-txt">{=langs('wm_opt_msg8')}</p>
+										</div>
+									</td>
+								</tr>
+								{/}
+								{? options.tel != 'N' }
+								<tr>
+									<th class="in_button padding-bot-40" scope="row">
+										<div class="th_tit-align">
+											<p class="th_tit-height">
+												{= langs('tel')}{? options.tel == 'Y' || options.tel == 'R'}<span id="tel_necessary" class="input-necessary">*</span>{/}
+											</p>
+										</div>
+									</th>
+									<td class="in_button padding-bot-40">
+										<input type='text' name='tel' value="{info.tel}" id="userinfo_contact_tel" class='input_type2' title="{=langs('wm_opt_msg9')}" placeholder="{=langs('wm_opt_msg9')}" {? options.tel == 'Y' || options.tel == 'R'}validate="required:{= langs('login_chktel')}"{/} tabindex="6" />
+									</td>
+								</tr>
+								{/}
+								<!-- 생년월일 -->
+								{? options.birthday != 'N'}
+								<tr>
+									<th class="in_button padding-bot-40" scope="row">
+										<div class="th_tit-align">
+											<p class="th_tit-height">
+												{= langs('userinfo_birth')} {? options.birthday == 'Y' || options.birthday == 'R'}<span id="birthday_necessary" class="input-necessary">*</span>{/}
+											</p>
+										</div>
+									</th>
+									<td class="in_button padding-bot-40">
+										<div class="calendar_box">
+											{? prepared_info.birthday}
+											<input class="input_box" id="birth_day" name ="birth_day" title="{=langs('userinfo_birth')}" type="text" value="{prepared_info.birthday}"/>
+											{:}
+											<input class="input_box" id="birth_day" name ="birth_day" title="{=langs('userinfo_birth')}" type="text" value="{info.birthday}" placeholder="YYYY-MM-DD" tabindex="7" origin_value="{info.birthday}" />
+											{/}
+											<input type="hidden" id="user_input_birthday" >
+										</div>
+									</td>
+								</tr>
+								{/}
+
+								{? options.address != 'N'}
+								<tr>
+									<th class="in_button padding-bot-40" scope="row">
+										<div class="th_tit-align">
+											<p class="th_tit-height">
+												{=langs('userinfo_zip')} {? options.address == 'Y' || options.address == 'R'}<span id="zip_necessary" class="input-necessary">*</span>{/}
+											</p>
+										</div>
+									</th>
+									<td class="in_button padding-bot-40">
+										<input type='text' name='zip' id="zip" value="{info.zipcode}" class='input_type1' title="{= langs('wm_opt_msg11')}" placeholder="{= langs('wm_opt_msg11')}" maxlength='7' {? options.address == 'Y' || options.address == 'R'}validate="required:{= langs('repmail_msg6')}"{/} tabindex="8" />
+									</td>
+								</tr>
+								<tr>
+									<th class="in_button" scope="row">
+										<div class="th_tit-align">
+											<p class="th_tit-height">
+												{=langs('userinfo_address')} {? options.address == 'Y' || options.address == 'R'}<span id="address_necessary" class="input-necessary">*</span>{/}
+											</p>
+										</div>
+									</th>
+									<td class="in_button">
+										<input type='text' name='address1' id='address1' value="{info.address1}" class='input_type1' title="{=langs('wm_opt_msg12')}" placeholder="{=langs('wm_opt_msg12')}" {? options.address == 'Y' || options.address == 'R'}validate="required:{= langs('repmail_msg6')}"{/} tabindex="9" />
+									</td>
+								</tr>
+								{/}
+
+
+								<tr>
+									<td colspan="2" class="info_btn-next-step2">
+										<input type="button" id="btn_move_join_step2" class="btn_disabled" value="{=langs('navnext')}" title="{=langs('navnext')}" step="2" tabindex="10" disabled>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2" class="info_btn-move-login">
+										<a href="/member/login" title="{=langs('overlap_btn')}" tabindex="11">{=langs('overlap_btn')}</a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>	
+			<!-- step2 : 기본 정보 입력 -->
+			<div class="join_step2">
+				<div class="join_wrap-info" style="display: none;">
+					<div style="margin-bottom: 20px">
+						<div id="btn_move_join_step1" step="1" style="float:left">
+							<a style="cursor: pointer;">
+								<i class="isiz32 ph-arrow-left-thin"></i>
+							</a>
+						</div>
+						<div class="topMenuList" style="float:right">
+							<a href="/member/join_search" style="color:#64553F;">
+								{=langs('wm_login_ttl5')}
+							</a>
+						</div>
+					</div>
+					<div class="join_step2">
+						<div class="join_step-bar">
+							<div class="step-bar-left"></div>
+							<div class="step-bar-right"></div>
+						</div>
+						<div class="wrap_title">
+							<p>{=langs('wm_login_ttl1')}</p>
+							<p class="wrap_title-sub">{=langs('wm_login_ttl4')}</p>
+						</div>
+						<table class="t_type1" cellpadding="0" cellspacing="0" summary="{= langs('userinfo_onlyid')}, {= langs('userinfo_pass')}, {= langs('userinfo_repass')}, {= langs('userinfo_name')}, {= langs('userinfo_photo')}, {= langs('userinfo_birth')}, {= langs('userinfo_hp')}, {= langs('userinfo_tel')}, {= langs('userinto_email')}, {= langs('userinfo_zip')}, {= langs('userinfo_address')}, {= langs('userinfo_comno')}, {= langs('userinfo_grade')}, {= langs('sosok')}, {= langs('userinfo_group')}, {= langs('userinfo_workreview')}">
+							<colgroup>
+								<col width="174px" /><col width="*" />
+							</colgroup>
+							<tbody>
+								{? options.photo != 'N'}
+								<tr>
+									<th class="in_button" scope="row">
+										<div class="th_tit-align">
+											<p class="th_tit-height">
+												{= langs('wm_thead2')}
+											</p>
+										</div>
+									</th>
+									<td class="in_button">
+										<div class="in_profile-box">
+											<img id="fileattach" src="/asset/wm60/images/login_CI/icon_profile-default.svg" id="my_photo" width="84" height="72" alt="{= langs('userinfo_photo')}" />
+											<!--{*
+											버그사항 TECH-556
+											<input type='file' name='attachments' id="attachments" {? options.photo == 'Y' || options.photo == 'R'}validate="required:{= langs('login_chkpphto')}"{/} title="{= langs('attach')}" style="width:177px"/>*}-->
+											<input type='file' name='attachments' id="attachments" title="{= langs('attach')}" style="display:none;"/>
+											<!-- <button type="button" id="fileattach" class="button small white" style="margin:0 10px;"><span>{= langs('feilchoice')}</span></button> -->
+											<!-- <span id="uploaded_file_name">{= langs('no_choosen_file')}</span> -->
+											<input type='hidden' name='photo' id="photo" title="{= langs('attach_explore')}" />
+											<button type="button" id="img_reset" class="btn-def" title="{= langs('imgreset')}"><span>{= langs('imgreset')}</span></button>
+										</div>
+										<p class="in_profile-file_txt">{= langs('uploadImag')}</p>
+									</td>
+								</tr>
+								{/}
+	
+								{? options.sabeon != 'N'}
+								<tr>
+									<th class="in_button" scope="row">
+										<div class="th_tit-align">
+											<p class="th_tit-height">
+												{=langs('wm_thead3')} {? options.sabeon == 'Y' || options.sabeon == 'R'}<span id="sabeon_necessary" class="input-necessary">*</span>{/}
+											</p>
+										</div>
+									</th>
+									<td class="in_button under_pad-no">
+									{? prepared_info.sabeon}
+										<input type="hidden" name="sabeon" value="{prepared_info.sabeon}" readonly>
+										<span>{prepared_info.sabeon}</span>
+									{:}
+										{? options.sabeon == 'Y' || options.sabeon == 'R' || get_code_name('config','CUSTOM_eas') > 0 }
+											<input type='text' name='sabeon' value="{info.sabeon}" class='input_type1' title="{=langs('wm_opt_msg13')}" placeholder="{=langs('wm_opt_msg13')}" id="sabeon" {? options.sabeon == 'Y' || options.sabeon == 'R'}validate="required:{= langs('login_chkcomno')}"{/} />
+										{:}
+											{? get_code_name('config', 'CUSTOM_server_type') == 'GGU'}
+											<input type='text' name='sabeon' value="{info.sabeon}" class='input_type1' title="{=langs('wm_opt_msg13')}" id="sabeon" {? options.sabeon == 'Y' || options.sabeon == 'R'}validate="required:{= langs('login_chkcomno')}"{/} readonly />
+											{:}
+											<input type='text' name='sabeon' value="{info.sabeon}" class='input_type1' title="{=langs('wm_opt_msg13')}" id="sabeon" {? options.sabeon == 'Y' || options.sabeon == 'R'}validate="required:{= langs('login_chkcomno')}"{/}  />
+											{/}
+										{/}
+										<div class="validation-list">
+											<p class="validation-text txt-suc" id="validate_sabeon" style="display:none;">
+												<i class="isiz18 ph-check-circle-light"></i><span>{=langs('wm_opt_msg35')}</span>
+											</p>
+											<p class="validation-text txt-fail" id="duplicate_sabeon" style="display:none;">
+												<i class="isiz18 ph-x-circle-thin"></i><span>{=langs('wm_opt_msg36')}</span>
+											</p>
+										</div>
+									{/}
+									</td>
+								</tr>
+								{/}
+	
+								{? options.sosok != 'N' }
+								<tr>
+									<th class="in_button padding-bot-46" scope="row">
+										<div class="th_tit-align">
+											<p class="th_tit-height">
+												{=langs('sosok')} {? options.sosok == 'Y' || options.sosok == 'R'}<span id="sosok_necessary" class="input-necessary">*</span>{/}
+											</p>
+										</div>
+									</th>
+									<td class="in_button padding-bot-46 in_sabeon-trigger">
+									{? prepared_info.sosokname}
+										<input type="hidden" name="sosokname" value="{prepared_info.sosokname}" readonly>
+										<span>{prepared_info.sosokname}</span>
+									{: prepared_info.sosok}
+										<input type="hidden" name="sosok" value="{prepared_info.sosok}" readonly>
+										<span>{= get_code_name('sosok', prepared_info.sosok)}</span>
+									{:}
+										<input id="sosok_input" type='text' value="{info.sosokname}" class='input_type1' title="{=langs('wm_opt_msg37')}" placeholder="{=langs('wm_opt_msg37')}"  disabled/>
+										<button type="button" id="mem_check" class="sabeon-trigger">
+
+										</button>
+										<span id="sosok_area">
+												<input type="hidden" name="sosok" {? options.sosok == 'Y' || options.sosok == 'R'}validate="required:소속을 입력해주세요."{/}>
+										</span>
+									{/}
+									</td>
+								</tr>
+								{/}
+	
+								{? options.job_duty != 'N'}
+								<!-- 직책 -->
+								<tr>
+									<th class="in_button padding-bot-46" scope="row">
+										<div class="th_tit-align">
+											<p class="th_tit-height">
+												{=langs('userinfo_job_duty')} {? options.job_duty == 'Y' || options.job_duty == 'R'}<span id="job_duty_necessary" class="input-necessary">*</span>{/}
+											</p>
+										</div>
+									</th>
+									<td class="in_button padding-bot-46">
+										{? prepared_info.job_duty}
+											<input type="hidden" name="job_duty" value="{prepared_info.job_duty}" readonly>
+											<span>{prepared_info.job_duty}</span>
+										{:}
+											<input type='text' name='job_duty' id="job_duty" value="{info.job_duty}" class='input_type1' title="{= langs('wm_opt_msg14')}" placeholder="{=langs('wm_opt_msg14')}" {? options.job_duty == 'Y' || options.job_duty == 'R'}validate="required:{= langs('userinfo_job_duty')}"{/} />
+										{/}
+									</td>
+								</tr>
+								{/}
+	
+								{? options.title != 'N'}
+								<!-- 직위 -->
+								<tr>
+									<th class="in_button padding-bot-46" scope="row">
+										<div class="th_tit-align">
+											<p class="th_tit-height">
+												{=langs('userinfo_grade')} {? options.title == 'Y' || options.title == 'R'}<span id="title_necessary" class="input-necessary">*</span> {/}
+											</p>
+										</div>
+									</th>
+									<td class="in_button padding-bot-46">
+									{? prepared_info.gradename}
+										<input type="hidden" name="grade" value="{prepared_info.gradename}" readonly>
+										<span>{prepared_info.gradename}</span>
+									{:}
+										<div class="member-type1-dropdown">
+											<select name="grade" id="grade" {? options.title == 'Y' || options.title == 'R'}validate="required:{= langs('admin_formEdit_msg20')}"{/} data-class="noevent">
+											<option selected="selected" value=""> {=langs('wm_opt_msg15')}</option>
+											{@ grade_list}
+												<option value="{.ps_name}" {? info.title == .ps_name}selected="selected"{/}>{.ps_name}</option>
+											{/}
+											</select>
+										</div>
+									{/}
+									</td>
+								</tr>
+								{/}
+
+								{? get_code_name('config', 'CUSTOM_server_type') == 'GGU2'}
+									<input type="hidden" id="group" name="users_group" value="{info.group}">
+								{:}
+									{? options.usergroup != 'N'}
+									<tr>
+										<th class="in_button padding-bot-46">
+											<div class="th_tit-align">
+												<p class="th_tit-height">
+													{=langs('usergroup')} {? options.usergroup == 'Y' || options.usergroup == 'R'}<span id="usergroup_necessary" class="input-necessary">*</span>{/}
+												</p>
+											</div>
+										</th>
+										<td class="in_button padding-bot-46">
+											{? prepared_info.groupname}
+											<input type="hidden" name="groupname" value="{prepared_info.groupname}" readonly>
+											<span>{prepared_info.groupname}</span>
+											{:}
+											<div class="member-type1-dropdown">
+												{* validate가 존재하면 그룹 옵션이 필수일 경우 아이디 신청이 되지 않는다. *}
+												{* <select name="users_group" id="users_group" {? options.usergroup == 'Y' || options.usergroup == 'R'}validate="required:{= langs('login_chkgroup')}"{/} data-class="noevent"> *}
+												<select name="users_group" id="users_group" data-class="noevent">
+												<option selected="selected" value=""> {=langs('select_user_group')} </option>
+												{@ user_group_list}
+												<option value="{.gr_id}" {? info.groupseq==.gr_id}selected="selected"{/}>{.gr_name}</option>
+												{/}
+												</select>
+											</div>
+											{/}
+										</td>
+									</tr>
+									{/}
+								{/}
+
+								{? options.join_type != 'N'}
+								<tr>
+									<th class="in_button padding-bot-46">
+										<div class="th_tit-align">
+											<p class="th_tit-height">
+												{=langs('userinfo_join_type')} {? options.join_type == 'Y' || options.join_type == 'R'}<span id="join_type_necessary" class="input-necessary">*</span>{/}
+											</p>
+										</div>
+									</th>
+									<td class="in_button padding-bot-46">
+										<input type='text' name='join_type' id='join_type' class='input_type1' title="{= langs('userinfo_join_type')}" placeholder="{=langs('wm_opt_msg16')}" {? options.join_type == 'Y' || options.join_type == 'R'} validate="required:{= langs('userinfo_join_type')}"{/}/>
+									</td>
+								</tr>
+								{/}
+								<!-- 표준 시간 -->
+								<tr>
+									<th class="in_button padding-bot-46" scope="row">
+										<div class="th_tit-align">
+											<p class="th_tit-height">
+												{= langs('mailsetgmt')}
+											</p>
+										</div>
+									</th>
+									<td class="in_button padding-bot-46">
+										<div class="member-type1-dropdown">
+											<select name="timegmt" id="timegmt" data-class="noevent">
+												<option value="-12"  {? time_gmt=="-12" }selected{/}>{=gmtPrint('-12',lang)}</option>
+												<option value="-11"  {? time_gmt=="-11" }selected{/}>{=gmtPrint('-11',lang)}</option>
+												<option value="-10"  {? time_gmt=="-10" }selected{/}>{=gmtPrint('-10',lang)}</option>
+												<option value="-9.5" {? time_gmt=="-9.5"}selected{/}>{=gmtPrint('-9.5',lang)}</option>
+												<option value="-9"   {? time_gmt=="-9"  }selected{/}>{=gmtPrint('-9',lang)}</option>
+												<option value="-8.5" {? time_gmt=="-8.5"}selected{/}>{=gmtPrint('-8.5',lang)}</option>
+												<option value="-8"   {? time_gmt=="-8"  }selected{/}>{=gmtPrint('-8',lang)}</option>
+												<option value="-7"   {? time_gmt=="-7"  }selected{/}>{=gmtPrint('-7',lang)}</option>
+												<option value="-6"   {? time_gmt=="-6"  }selected{/}>{=gmtPrint('-6',lang)}</option>
+												<option value="-5"   {? time_gmt=="-5"  }selected{/}>{=gmtPrint('-5',lang)}</option>
+												<option value="-4.5" {? time_gmt=="-4.5"}selected{/}>{=gmtPrint('-4.5',lang)}</option>
+												<option value="-4"   {? time_gmt=="-4"  }selected{/}>{=gmtPrint('-4',lang)}</option>
+												<option value="-3.5" {? time_gmt=="-3.5"}selected{/}>{=gmtPrint('-3.5',lang)}</option>
+												<option value="-3"   {? time_gmt=="-3"  }selected{/}>{=gmtPrint('-3',lang)}</option>
+												<option value="-2"   {? time_gmt=="-2"  }selected{/}>{=gmtPrint('-2',lang)}</option>
+												<option value="-1"   {? time_gmt=="-1"  }selected{/}>{=gmtPrint('-1',lang)}</option>
+												<option value="0"    {? time_gmt=="0"   }selected{/}>{=gmtPrint('0',lang)}</option>
+												<option value="1"    {? time_gmt=="1"   }selected{/}>{=gmtPrint('1',lang)}</option>
+												<option value="2"    {? time_gmt=="2"   }selected{/}>{=gmtPrint('2',lang)}</option>
+												<option value="3"    {? time_gmt=="3"   }selected{/}>{=gmtPrint('3',lang)}</option>
+												<option value="3.5"  {? time_gmt=="3.5" }selected{/}>{=gmtPrint('3.5',lang)}</option>
+												<option value="4"    {? time_gmt=="4"   }selected{/}>{=gmtPrint('4',lang)}</option>
+												<option value="4.5"  {? time_gmt=="4.5" }selected{/}>{=gmtPrint('4.5',lang)}</option>
+												<option value="5"    {? time_gmt=="5"   }selected{/}>{=gmtPrint('5',lang)}</option>
+												<option value="5.5"  {? time_gmt=="5.5" }selected{/}>{=gmtPrint('5.5',lang)}</option>
+												<option value="5.75" {? time_gmt=="5.75"}selected{/}>{=gmtPrint('5.75',lang)}</option>
+												<option value="6"    {? time_gmt=="6"   }selected{/}>{=gmtPrint('6',lang)}</option>
+												<option value="6.5"  {? time_gmt=="6.5" }selected{/}>{=gmtPrint('6.5',lang)}</option>
+												<option value="7"    {? time_gmt=="7"   }selected{/}>{=gmtPrint('7',lang)}</option>
+												<option value="8"    {? time_gmt=="8"   }selected{/}>{=gmtPrint('8',lang)}</option>
+												<option value="9"    {? time_gmt=="9"   }selected{/}>{=gmtPrint('9',lang)}</option>
+												<option value="9.5"  {? time_gmt=="9.5" }selected{/}>{=gmtPrint('9.5',lang)}</option>
+												<option value="10"   {? time_gmt=="10"  }selected{/}>{=gmtPrint('10',lang)}</option>
+												<option value="11"   {? time_gmt=="11"  }selected{/}>{=gmtPrint('11',lang)}</option>
+												<option value="11.5" {? time_gmt=="11.5"}selected{/}>{=gmtPrint('11.5',lang)}</option>
+												<option value="12"   {? time_gmt=="12"  }selected{/}>{=gmtPrint('12',lang)}</option>
+											</select>
+										</div>
+									</td>
+								</tr>
+								{? options.charge != 'N'}
+								<!-- 메모 -->
+								<tr>
+									<th class="in_button" scope="row">
+										<div class="th_tit-align">
+											<p class="th_tit-height">
+												{=langs('userinfo_workreview')} {? options.charge == 'Y' || options.charge == 'R'}<span id="charge_necessary" class="input-necessary">*</span>{/}
+											</p>
+										</div>
+									</th>
+									<td class="in_button">
+										<textarea name="memo" id="memo" maxlength="100" placeholder="{=langs('wm_opt_msg17')}" {? options.charge == 'Y' || options.charge == 'R'}validate="required:{= langs('no_memo')}"{/} >{info.charge}</textarea>
+										<p class="in_memo-count"><span id="memoLength">0</span>/100</p>
+									</td>
+								</tr>
+								{/}
+	
+								{? get_code_name('config', 'CUSTOM_member_join_terms') != '' || join_terms }
+									{# join_terms}
+								{/}
+								
+								<tr>
+									<td colspan="2" class="info_btn-next-step2">
+										<input type="button" id="apply_btn" class="button btn_ok btn_disabled" value="{= langs('apply_form')}" title="{= langs('apply_form')}" disabled>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2" class="info_btn-move-login">
+										<a href="/member/login" title="{=langs('overlap_btn')}">{=langs('overlap_btn')}</a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	{? SERVER_TYPE != 'RESELLER2'}
+	{? get_code_name('config', 'CUSTOM_copyrightremove') != 'Y'}
+		<div id="copyright" style="background: #f7f7f7">
+			{? get_code_name('config', 'CUSTOM_copyrightText') == ''}
+			<p>© MAILPLUG Inc. All rights reserved.</p>
+			{:}
+			<p>{= get_code_name('config', 'CUSTOM_copyrightText')}</p>
+			{/}
+		</div>
+	{/}
+	{/}
+</body>
